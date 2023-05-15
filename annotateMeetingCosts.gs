@@ -1,23 +1,33 @@
 function annotateMeetingCosts() {
-  doAnnotateMeetingCosts(3);
-}
-
-function doAnnotateMeetingCosts(minNumberOfParticipants) {
+  var daysToAnnotateFromNow = 7;
   // TODO Adjust this to whatever the average hourly rate in your company is
   var averageHourlyRate = 100;
+  // TODO Adjust this to the ID of your calendar
+  doAnnotateMeetingCosts('YourCalendarID', 2, daysToAnnotateFromNow, averageHourlyRate);
+}
 
-  // TODO Adjust this to the name of your calendar
-  var calendarName = 'YourCalendar';
-  
-  // Caution: Months start at 0 so January is 0, February is 1, ...
-  var fromDate = new Date(2023, 0, 1, 0, 0, 0);
-  var toDate = new Date(2023, 11, 1, 0, 0, 0);
+function doAnnotateMeetingCosts(calendarId, minNumberOfParticipants, daysToAnnotateFromNow, averageHourlyRate) {
+  var fromDate = new Date();
+  fromDate.setTime(Date.now());
 
-  var calendar = CalendarApp.getCalendarsByName(calendarName)[0];
+  var toDate = new Date();
+  toDate.setTime(fromDate.getTime() + 1000 * 60 * 60 * 24 * daysToAnnotateFromNow);
+
+  var calendar = CalendarApp.getCalendarById(calendarId);
   var events = calendar.getEvents(fromDate, toDate);
   for (var i = 0; i < events.length; i++) {
     var event = events[i];
-    var participantCount = event.getGuestList().length;
+    var creators = event.getCreators();
+    if (creators.indexOf(calendarId) < 0) {
+      Logger.log("Skipping event " + event.getTitle() + ", because " + calendarId + " is not the creator");
+      continue;
+    }
+
+    var uniqueParticipants = new Set();
+    var guests = event.getGuestList();
+    guests.forEach(guest => uniqueParticipants.add(guest.getEmail()));
+    creators.forEach(creator => uniqueParticipants.add(creator));
+    var participantCount = uniqueParticipants.size;
     var durationInHours = (event.getEndTime() - event.getStartTime()) / 1000 / 60 / 60;
     Logger.log(event.getTitle() + ": " + participantCount + " participant(s) - " + durationInHours + " hour(s)");
     if (participantCount > (minNumberOfParticipants - 1)) {
@@ -27,7 +37,9 @@ function doAnnotateMeetingCosts(minNumberOfParticipants) {
         description = description.replace(regex, "");
       }
 
-      description = description + "Estimated costs for this meeting: " + (participantCount * durationInHours * averageHourlyRate) + "€";
+      description = description.trim();
+      var costs = Math.floor(participantCount * durationInHours * averageHourlyRate);
+      description = description + "\n\nEstimated costs for this meeting: " + (costs) + "€";
       Logger.log("New description for event '"+ event.getTitle() + "' is '" + description + "'");
       event.setDescription(description);
     }
