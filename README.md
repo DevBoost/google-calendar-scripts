@@ -16,9 +16,9 @@ The time range for which to delete meetings can be customized in the script.
 
 ### Annotate Meeting Costs Script
 
-The script [annotateMeetingCosts.gs](./annotateMeetingCosts.gs) can be used to annotate estimated costs for all calendar entries with more than a certain number of participants. It was inspired by many people who noticed that making the costs of a meeting visible would be usefule. Showing the costs can help to judge which meetings are needed and which are just too expensive considering the value they create.
+The script [annotateMeetingCosts.gs](./annotateMeetingCosts.gs) can be used to annotate estimated costs for all calendar entries with more than a certain number of participants. It was inspired by many people who noticed that making the costs of a meeting visible would be useful. Showing the costs can help to judge which meetings are needed and which are just too expensive considering the value they create.
 
-The script annotates the costs of a meeting based on the number of participants, the length of the meeting and the average costs per employee and hours. It annotates all meetings within the next 7 days. So in order to annotate new meetings regularly it should be scheduled at least once per week.
+The script annotates the costs of a meeting based on the number of participants, the length of the meeting and the average costs per employee and hour. It annotates all meetings within the next 7 days. So in order to annotate new meetings regularly it should be scheduled to run at least once per week.
 
 ## Installing/Using the Scripts
 
